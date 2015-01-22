@@ -1,6 +1,6 @@
-angular.module('flapperNews',['ui.router'])
+var app = angular.module('flapperNews',['ui.router']);
 
-.config([
+app.config([
 '$stateProvider',
 '$urlRouterProvider',
 function($stateProvider, $urlRouterProvider) {
@@ -9,28 +9,26 @@ function($stateProvider, $urlRouterProvider) {
             url: '/home',
             templateUrl: '/home.html',
             controller: 'MainCtrl'
-        });
-    $stateProvider
+        })
          .state('posts',{
             url: '/posts/{id}',
             templateUrl: '/posts.html',
             controller: 'PostsCtrl'
         });   
     $urlRouterProvider.otherwise('home');
-}])
+}]);
 
-.factory('posts', [function(){
+app.factory('posts', [function(){
   var o = {
     posts: []
   };
   return o;
-}])
+}]);
 
-.controller('MainCtrl',[
+app.controller('MainCtrl',[
     '$scope',
     'posts',
     function($scope, posts){
-        $scope.test = 'Hello World';
         $scope.posts = posts.posts;
         $scope.addPost = function(){
             if(!$scope.title || $scope.title === '') {return;}
@@ -41,14 +39,23 @@ function($stateProvider, $urlRouterProvider) {
         $scope.incrementUpvotes = function(post){
             post.upvotes++;
         };
-}])
+}]);
 
-.controller('PostsCtrl', [
+app.controller('PostsCtrl', [
     '$scope',
     '$stateParams',
     'posts',
     function($scope, $stateParams, posts){
         $scope.post = posts.posts[$stateParams.id];
+        $scope.addComent = function(){
+            if($scope.body === '') {return;}
+            $scope.post.comments.push({
+                body: $scope.body,
+                author: 'user',
+                upvotes: 0
+            });
+            $scope.body = '';
+        };
         $scope.posts.push({
         title: $scope.title,
         link: $scope.link,
@@ -56,8 +63,8 @@ function($stateProvider, $urlRouterProvider) {
         comments: [
             {author: 'Joe', body: 'Cool post!', upvotes: 0},
             {author: 'Bob', body: 'Great idea but everything is wrong!', upvotes: 0}
-            ]
+            ],
         });
-}])
+}]);
     
 
